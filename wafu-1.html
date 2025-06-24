@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Waifu Hub 💖</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0e0e1a;
+      --accent: #ff4da6;
+      --accent-dark: #d43d88;
+      --text: #fff;
+      --text-muted: #b8b8d3;
+      --sidebar: #1a1a2d;
+      --hover: #2a2a47;
+      --card-bg: #1e1e3a;
+      --card-hover: #2d2d5a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navigatie sidebar */
+    nav {
+      background: var(--sidebar);
+      width: 250px;
+      min-height: 100vh;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      transition: transform 0.3s ease;
+      z-index: 10;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    .logo h2 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-left: 10px;
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 12px 25px;
+      margin: 5px 10px;
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    nav a:hover, nav a.active {
+      background-color: var(--hover);
+      color: var(--accent);
+    }
+
+    nav a i {
+      margin-right: 12px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Hoofdcontent */
+    main {
+      margin-left: 250px;
+      padding: 30px;
+      flex: 1;
+      transition: 0.3s;
+    }
+
+    /* --- Animatie verbeteringen --- */
+    .section {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+      animation: fadeIn 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .media-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s, opacity 0.3s;
+      position: relative;
+      opacity: 0;
+      animation: cardFadeIn 0.5s forwards;
+    }
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .media-card.visible {
+      opacity: 1;
+    }
+    .media-card:hover {
+      transform: scale(1.04) translateY(-8px) rotate(-1deg);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-header h1 {
+      color: var(--accent);
+      font-size: 1.8rem;
+    }
+
+    .refresh-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+    }
+
+    .refresh-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .refresh-btn i {
+      margin-right: 5px;
+    }
+
+    /* Gallery stijlen */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .media-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s, opacity 0.3s;
+      position: relative;
+      opacity: 0;
+      animation: cardFadeIn 0.5s forwards;
+    }
+
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .media-card.visible {
+      opacity: 1;
+    }
+
+    .media-card img, .media-card video {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .media-card video {
+      background: #000;
+    }
+
+    .media-info {
+      padding: 12px;
+      font-size: 0.9rem;
+    }
+
+    .media-type {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    /* Header voor mobiel */
+    header {
+      display: none;
+      background: var(--sidebar);
+      padding: 15px 20px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 11;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-title i {
+      color: var(--accent);
+      margin-right: 10px;
+    }
+
+    .menu-toggle {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    /* Instellingen pagina */
+    .settings-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .setting-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+
+    .setting-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .setting-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      color: var(--accent);
+    }
+
+    .setting-header i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    .toggle {
+      width: 50px;
+      height: 24px;
+      background: #555;
+      border-radius: 50px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      top: 2px;
+      left: 2px;
+      transition: 0.3s;
+    }
+
+    .toggle.active {
+      background: var(--accent);
+    }
+
+    .toggle.active::before {
+      left: 28px;
+    }
+
+    .setting-description {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .search-bar {
+      margin-bottom: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+    .search-bar input:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tag-btn {
+      background: var(--hover);
+      color: var(--accent);
+      border: none;
+      border-radius: 5px;
+      padding: 5px 14px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tag-btn.active, .tag-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .setting-row .setting-description {
+      margin-top: 0;
+    }
+    .setting-row .setting-extra {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+    .toggle.setting-compact { margin-left: 10px; }
+    .toggle.setting-anim { margin-left: 10px; }
+    .toggle.setting-results { margin-left: 10px; }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Extra instellingen & handige dingen */
+    .scroll-top-btn {
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 1.5rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .scroll-top-btn.show {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+    .download-all-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .download-all-btn:hover {
+      background: var(--accent-dark);
+    }
+    .reset-filters-btn {
+      background: var(--hover);
+      color: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .reset-filters-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .setting-row label {
+      margin-left: 8px;
+      color: var(--text-muted);
+      font-size: 0.95em;
+    }
+
+    /* Responsive aanpassingen */
+    @media (max-width: 768px) {
+      nav {
+        transform: translateX(-100%);
+        width: 280px;
+      }
+
+      nav.open {
+        transform: translateX(0);
+      }
+
+      main {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 70px;
+      }
+
+      header {
+        display: flex;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .media-card img, .media-card video {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+      }
+
+      .media-card img, .media-card video {
+        height: 160px;
+      }
+    }
+
+    /* NSFW waarschuwing */
+    .nsfw-warning {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .nsfw-warning i {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
+
+    .nsfw-warning h2 {
+      margin-bottom: 15px;
+    }
+
+    .nsfw-warning p {
+      margin-bottom: 20px;
+      color: var(--text-muted);
+    }
+
+    .enable-nsfw {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: bold;
+    }
+
+    .enable-nsfw:hover {
+      background: var(--accent-dark);
+    }
+
+    /* --- Verbeterde toast popup --- */
+    .toast-message {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      box-shadow: 0 6px 32px rgba(0,0,0,0.25);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      animation: toastIn 0.4s cubic-bezier(.4,0,.2,1) forwards, toastOut 0.4s 2.6s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes toastIn { to { opacity: 1; pointer-events: auto; } }
+    @keyframes toastOut { to { opacity: 0; pointer-events: none; } }
+
+    /* --- Image/GIF/Video modal --- */
+    #mediaModal {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(20,20,30,0.95);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s;
+    }
+    #mediaModal.active { display: flex; }
+    #mediaModal .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card-bg);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      position: relative;
+      animation: cardFadeIn 0.4s;
+    }
+    #mediaModal img, #mediaModal video {
+      max-width: 90vw;
+      max-height: 80vh;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      background: #000;
+    }
+    #mediaModal .modal-close {
+      position: absolute;
+      top: 10px; right: 18px;
+      font-size: 2.2rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      transition: color 0.2s;
+    }
+    #mediaModal .modal-close:hover { color: #fff; }
+    #mediaModal .modal-info {
+      color: var(--text-muted);
+      text-align: center;
+      margin: 10px 0 0 0;
+      font-size: 1.1rem;
+    }
+
+    /* --- Extra settings --- */
+    .setting-row input[type="range"] {
+      width: 100px;
+      margin-left: 10px;
+    }
+    .setting-row input[type="checkbox"] {
+      margin-left: 10px;
+      transform: scale(1.2);
+    }
+    .setting-row select, .setting-row input[type="color"] {
+      margin-left: 10px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text);
+    }
+    .setting-row input[type="text"] {
+      margin-left: 10px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text);
+      width: 120px;
+    }
+    .setting-row .setting-description {
+      margin-top: 0;
+    }
+    .setting-row .setting-extra {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    /* Sidebar navigation */
+    nav#sidebar {
+      background: var(--sidebar);
+      width: 250px;
+      min-height: 100vh;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      transition: transform 0.3s ease;
+      z-index: 10;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    nav#sidebar .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+    nav#sidebar .logo h2 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-left: 10px;
+    }
+    nav#sidebar .logo-icon {
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+    nav#sidebar a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 12px 25px;
+      margin: 5px 10px;
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    nav#sidebar a:hover, nav#sidebar a.active {
+      background-color: var(--hover);
+      color: var(--accent);
+    }
+    nav#sidebar a i {
+      margin-right: 12px;
+      width: 20px;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <div class="header-title">
+      <i class="fas fa-heart"></i>
+      <span>Waifu Hub</span>
+    </div>
+  </header>
+
+  <!-- Sidebar navigation -->
+  <nav id="sidebar">
+    <div class="logo">
+      <i class="fas fa-heart logo-icon"></i>
+      <h2>Waifu Hub</h2>
+    </div>
+    <a href="#images" onclick="showSection('images'); loadWaifus()" class="active">
+      <i class="fas fa-image"></i>
+      <span>Images</span>
+    </a>
+    <a href="#reals" onclick="showSection('reals'); loadReals()">
+      <i class="fas fa-bolt"></i>
+      <span>Waifus Reals</span>
+    </a>
+    <a href="#favs" onclick="showSection('favs'); loadFavs()">
+      <i class="fas fa-star"></i>
+      <span>Favorites</span>
+    </a>
+    <a href="#gifs" onclick="showSection('gifs'); loadGIFs()">
+      <i class="fas fa-photo-film"></i>
+      <span>GIFs</span>
+    </a>
+    <a href="#settings" onclick="showSection('settings')">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <main>
+    <!-- Images Section -->
+    <div id="images" class="section active">
+      <div class="section-header">
+        <h1><i class="fas fa-image"></i> Waifu Images</h1>
+        <div>
+          <button class="refresh-btn" onclick="loadWaifus()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+          <button class="download-all-btn" onclick="downloadAll('image')">
+            <i class="fas fa-download"></i> Download All
+          </button>
+          <button class="reset-filters-btn" onclick="resetFilters('image')">
+            <i class="fas fa-filter-circle-xmark"></i> Reset Filters
+          </button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input id="imageSearch" type="text" placeholder="Search images or tags..." oninput="filterGallery('image')">
+      </div>
+      <div class="tag-list" id="imageTags"></div>
+      <div class="gallery" id="imageGallery">
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Waifus Reals Section -->
+    <div id="reals" class="section">
+      <div class="section-header">
+        <h1><i class="fas fa-bolt"></i> Waifus Reals</h1>
+        <div>
+          <button class="refresh-btn" onclick="loadReals()">
+            <i class="fas fa-sync-alt"></i> New Reel
+          </button>
+          <button class="download-all-btn" onclick="downloadAll('reals')">
+            <i class="fas fa-download"></i> Download All
+          </button>
+        </div>
+      </div>
+      <div id="realsContainer" style="display:flex;flex-direction:column;align-items:center;gap:18px;min-height:60vh;">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+      <div style="text-align:center;margin-top:18px;">
+        <button class="refresh-btn" onclick="prevReals()"><i class="fas fa-chevron-left"></i> Prev</button>
+        <button class="refresh-btn" onclick="nextReals()">Next <i class="fas fa-chevron-right"></i></button>
+        <button class="download-all-btn" onclick="favCurrentReals()"><i class="fas fa-star"></i> Favorite</button>
+      </div>
+    </div>
+
+    <!-- Favorites Section -->
+    <div id="favs" class="section">
+      <div class="section-header">
+        <h1><i class="fas fa-star"></i> Favorites</h1>
+        <div>
+          <button class="refresh-btn" onclick="loadFavs()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+          <button class="reset-filters-btn" onclick="clearFavs()">
+            <i class="fas fa-trash"></i> Clear All
+          </button>
+        </div>
+      </div>
+      <div class="gallery" id="favsGallery"></div>
+    </div>
+
+    <!-- GIFs Section -->
+    <div id="gifs" class="section">
+      <div class="section-header">
+        <h1><i class="fas fa-photo-film"></i> Anime GIFs</h1>
+        <div>
+          <button class="refresh-btn" onclick="loadGIFs()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+          <button class="download-all-btn" onclick="downloadAll('gif')">
+            <i class="fas fa-download"></i> Download All
+          </button>
+          <button class="reset-filters-btn" onclick="resetFilters('gif')">
+            <i class="fas fa-filter-circle-xmark"></i> Reset Filters
+          </button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input id="gifSearch" type="text" placeholder="Search GIFs or tags..." oninput="filterGallery('gif')">
+      </div>
+      <div class="tag-list" id="gifTags"></div>
+      <div class="gallery" id="gifGallery"></div>
+    </div>
+
+    <!-- Settings Section -->
+    <div id="settings" class="section">
+      <div class="section-header">
+        <h1><i class="fas fa-cog"></i> Settings</h1>
+      </div>
+      <div class="settings-container">
+        <div class="setting-card">
+          <div class="setting-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Content Preferences</h2>
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Show NSFW Content</h3>
+              <p class="setting-description">Enable to view 18+ mature content</p>
+            </div>
+            <div class="toggle" onclick="toggleNSFW()" id="nsfwToggle"></div>
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Results per page</h3>
+              <p class="setting-description">How many images/videos/GIFs to show</p>
+            </div>
+            <input type="number" min="4" max="30" step="1" id="resultsCount" value="12" style="width:60px; border-radius:5px; padding:3px 7px;">
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Auto Refresh</h3>
+              <p class="setting-description">Automatically refresh content every X seconds</p>
+              <label for="autoRefreshInterval">(0 = off)</label>
+            </div>
+            <input type="number" min="0" max="600" step="1" id="autoRefreshInterval" value="0" style="width:60px; border-radius:5px; padding:3px 7px;">
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Show Tags</h3>
+              <p class="setting-description">Show/hide tag filters above galleries</p>
+            </div>
+            <div class="toggle active" id="showTagsToggle" onclick="toggleShowTags()"></div>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-header">
+            <i class="fas fa-palette"></i>
+            <h2>Appearance</h2>
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Dark Mode</h3>
+              <p class="setting-description">Currently using dark theme</p>
+            </div>
+            <div class="toggle active"></div>
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Compact Mode</h3>
+              <p class="setting-description">Reduce padding and card size</p>
+            </div>
+            <div class="toggle" id="compactToggle" onclick="toggleCompact()"></div>
+          </div>
+          <div class="setting-row">
+            <div>
+              <h3>Animations</h3>
+              <p class="setting-description">Enable/disable UI animations</p>
+            </div>
+            <div class="toggle active" id="animToggle" onclick="toggleAnim()"></div>
+          </div>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-header">
+            <i class="fas fa-info-circle"></i>
+            <h2>About Waifu Hub</h2>
+          </div>
+          <p style="margin-top: 15px; line-height: 1.6; color: var(--text-muted);">
+            Waifu Hub is a collection of anime images, videos and GIFs. 
+            All content is fetched from public APIs. This is a fan-made project 
+            and not affiliated with any anime studios.
+          </p>
+          <div style="margin-top: 20px; display: flex; gap: 15px;">
+            <button style="flex: 1;" class="refresh-btn">
+              <i class="fas fa-question-circle"></i> Help
+            </button>
+            <button style="flex: 1;" class="refresh-btn">
+              <i class="fas fa-bug"></i> Report Issue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Voeg modal toe net voor </body> -->
+  <div id="mediaModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeMediaModal()"><i class="fas fa-times"></i></button>
+      <div id="modalMedia"></div>
+      <div class="modal-info" id="modalInfo"></div>
+    </div>
+  </div>
+
+  <script>
+    // Menu functionaliteit
+    function toggleMenu() {
+      const nav = document.getElementById("sidebar");
+      nav.classList.toggle("open");
+    }
+
+    // Voorkom standaard navigatiegedrag
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+      });
+    });
+
+    // Sectie weergave
+    function showSection(id) {
+      // Update active nav link
+      document.querySelectorAll("nav a").forEach(link => {
+        link.classList.remove("active");
+      });
+      document.querySelector(`nav a[href="#${id}"]`).classList.add("active");
+      
+      // Update active section
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      
+      // Sluit mobiel menu automatisch
+      if (window.innerWidth < 768) {
+        document.getElementById("sidebar").classList.remove("open");
+      }
+      
+      // Scroll naar boven
+      window.scrollTo(0, 0);
+      
+      // Update URL zonder pagina te herladen
+      history.pushState(null, null, `#${id}`);
+    }
+
+    // Handle back/forward navigation
+    window.addEventListener('popstate', function() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        showSection(hash);
+      } else {
+        showSection('images');
+      }
+    });
+
+    // NSFW toggle
+    function toggleNSFW() {
+      const toggle = document.getElementById("nsfwToggle");
+      toggle.classList.toggle("active");
+      localStorage.setItem("nsfwEnabled", toggle.classList.contains("active"));
+      
+      // Toon melding
+      showToast(`18+ mode ${toggle.classList.contains("active") ? "enabled" : "disabled"}`);
+      
+      // Herlaad content als nodig
+      if (document.getElementById("images").classList.contains("active")) loadWaifus();
+      if (document.getElementById("gifs").classList.contains("active")) loadGIFs();
+      if (document.getElementById("videos").classList.contains("active")) loadVideos();
+    }
+
+    function isNSFW() {
+      return localStorage.getItem("nsfwEnabled") === "true";
+    }
+
+    // Verbeterde toast popup
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast-message";
+      toast.innerHTML = `<i class="fas fa-bell" style="margin-right:10px"></i>${message}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Vergroten van media (modal)
+    function openMediaModal(src, type, info) {
+      const modal = document.getElementById("mediaModal");
+      const modalMedia = document.getElementById("modalMedia");
+      const modalInfo = document.getElementById("modalInfo");
+      modalMedia.innerHTML = type === "video"
+        ? `<video src="${src}" controls autoplay loop style="max-width:90vw;max-height:80vh;border-radius:12px;background:#000"></video>`
+        : `<img src="${src}" style="max-width:90vw;max-height:80vh;border-radius:12px;background:#000">`;
+      modalInfo.textContent = info || "";
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+    function closeMediaModal() {
+      document.getElementById("mediaModal").classList.remove("active");
+      document.body.style.overflow = "";
+    }
+    document.getElementById("mediaModal").addEventListener("click", function(e) {
+      if (e.target === this) closeMediaModal();
+    });
+
+    // Klik op media-card: open modal
+    function enableMediaModalClicks() {
+      document.querySelectorAll('.media-card img, .media-card video').forEach(el => {
+        el.onclick = function(e) {
+          e.stopPropagation();
+          const card = el.closest('.media-card');
+          const tag = card?.getAttribute("data-tag") || "";
+          const info = tag ? tag.charAt(0).toUpperCase() + tag.slice(1) : "";
+          openMediaModal(el.src || el.currentSrc, el.tagName.toLowerCase(), info);
+        };
+      });
+    }
+
+    // Settings: compact mode & anims
+    function toggleCompact() {
+      const t = document.getElementById("compactToggle");
+      t.classList.toggle("active");
+      document.body.classList.toggle("compact");
+      localStorage.setItem("compactMode", t.classList.contains("active"));
+    }
+    function toggleAnim() {
+      const t = document.getElementById("animToggle");
+      t.classList.toggle("active");
+      document.body.classList.toggle("no-anim", !t.classList.contains("active"));
+      localStorage.setItem("animMode", t.classList.contains("active"));
+    }
+    // Restore settings on load
+    function restoreSettings() {
+      if (localStorage.getItem("compactMode") === "true") {
+        document.getElementById("compactToggle").classList.add("active");
+        document.body.classList.add("compact");
+      }
+      if (localStorage.getItem("animMode") === "false") {
+        document.getElementById("animToggle").classList.remove("active");
+        document.body.classList.add("no-anim");
+      }
+      if (localStorage.getItem("showTags") === "false") {
+        document.getElementById("showTagsToggle").classList.remove("active");
+        ["imageTags","gifTags","videoTags"].forEach(id => {
+          document.getElementById(id).style.display = "none";
+        });
+      }
+      if (localStorage.getItem("gridSize")) {
+        document.getElementById("gridSize").value = localStorage.getItem("gridSize");
+        updateGridSize();
+      }
+      if (localStorage.getItem("accentColor")) {
+        document.getElementById("accentColor").value = localStorage.getItem("accentColor");
+        updateAccentColor();
+      }
+      if (localStorage.getItem("fontFamily")) {
+        document.getElementById("fontFamily").value = localStorage.getItem("fontFamily");
+        updateFont();
+      }
+      if (localStorage.getItem("animSpeed")) {
+        document.getElementById("animSpeed").value = localStorage.getItem("animSpeed");
+        updateAnimSpeed();
+      }
+      if (localStorage.getItem("gridGap")) {
+        document.getElementById("gridGap").value = localStorage.getItem("gridGap");
+        updateGridGap();
+      }
+      if (localStorage.getItem("cardRadius")) {
+        document.getElementById("cardRadius").value = localStorage.getItem("cardRadius");
+        updateCardRadius();
+      }
+      if (localStorage.getItem("blurNSFW") === "false") {
+        document.getElementById("blurNSFW").checked = false;
+      }
+      if (localStorage.getItem("lazyLoad") === "false") {
+        document.getElementById("lazyLoadToggle").checked = false;
+      }
+    }
+
+    // --- Scroll to top button ---
+    window.addEventListener('scroll', () => {
+      document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 200);
+    });
+
+    // --- Download all media links as txt (simulate zip) ---
+    function downloadAll(type) {
+      if (type === "reals") {
+        if (!realsImages.length) return showToast("No waifus to download!");
+        const urls = realsImages.map(r => r.url);
+        const blob = new Blob([urls.join('\n')], {type: "text/plain"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `waifus_reals_links.txt`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => a.remove(), 100);
+        return;
+      }
+      let cards = [];
+      if (type === "image") cards = Array.from(document.querySelectorAll("#imageGallery .media-card img"));
+      if (type === "gif") cards = Array.from(document.querySelectorAll("#gifGallery .media-card img"));
+      if (type === "video") {
+        cards = Array.from(document.querySelectorAll("#videoGallery .media-card video source"))
+          .concat(Array.from(document.querySelectorAll("#videoGallery .media-card img")));
+      }
+      // Alleen zichtbare kaarten
+      cards = cards.filter(el => {
+        let card = el.closest('.media-card');
+        return card && card.style.display !== "none";
+      });
+      let urls = cards.map(el => el.src || el.getAttribute('src'));
+      if (!urls.length) {
+        showToast("No media to download!");
+        return;
+      }
+      const blob = new Blob([urls.join('\n')], {type: "text/plain"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${type}_links.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 100);
+    }
+
+    // --- Reset filters ---
+    function resetFilters(type) {
+      if (type === "image") {
+        document.getElementById("imageSearch").value = "";
+        activeTag.image = null;
+        document.querySelectorAll("#imageTags .tag-btn").forEach(b => b.classList.remove("active"));
+        filterGallery("image");
+      }
+      if (type === "gif") {
+        document.getElementById("gifSearch").value = "";
+        activeTag.gif = null;
+        document.querySelectorAll("#gifTags .tag-btn").forEach(b => b.classList.remove("active"));
+        filterGallery("gif");
+      }
+      if (type === "video") {
+        document.getElementById("videoSearch").value = "";
+        activeTag.video = null;
+        document.querySelectorAll("#videoTags .tag-btn").forEach(b => b.classList.remove("active"));
+        filterGallery("video");
+      }
+    }
+
+    // --- Show/hide tags ---
+    function toggleShowTags() {
+      const t = document.getElementById("showTagsToggle");
+      t.classList.toggle("active");
+      const show = t.classList.contains("active");
+      ["imageTags","gifTags","videoTags"].forEach(id => {
+        document.getElementById(id).style.display = show ? "" : "none";
+      });
+      localStorage.setItem("showTags", show);
+    }
+
+    // --- Auto refresh ---
+    let autoRefreshTimer = null;
+    function setupAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      const interval = parseInt(document.getElementById("autoRefreshInterval")?.value) || 0;
+      if (interval > 0) {
+        autoRefreshTimer = setInterval(() => {
+          if (document.getElementById("images").classList.contains("active")) loadWaifus();
+          if (document.getElementById("gifs").classList.contains("active")) loadGIFs();
+          if (document.getElementById("videos").classList.contains("active")) loadVideos();
+        }, interval * 1000);
+      }
+    }
+
+    // --- Event listeners na DOM load ---
+    window.onload = () => {
+      // Stel NSFW toggle in
+      if (localStorage.getItem("nsfwEnabled") === "true") {
+        document.getElementById("nsfwToggle").classList.add("active");
+      }
+      restoreSettings();
+      // Show/hide tags setting
+      if (localStorage.getItem("showTags") === "false") {
+        document.getElementById("showTagsToggle").classList.remove("active");
+        ["imageTags","gifTags","videoTags"].forEach(id => {
+          document.getElementById(id).style.display = "none";
+        });
+      }
+      // Auto refresh event
+      document.getElementById("autoRefreshInterval")?.addEventListener("change", setupAutoRefresh);
+      // Controleer hash bij laden
+      const hash = window.location.hash.substring(1);
+      if (hash && document.getElementById(hash)) {
+        showSection(hash);
+        if (hash === 'images') loadWaifus();
+        if (hash === 'videos') loadVideos();
+        if (hash === 'gifs') loadGIFs();
+      } else {
+        // Standaard laad images
+        showSection('images');
+        loadWaifus();
+      }
+      setupAutoRefresh();
+    };
+
+    // --- Tag & search helpers ---
+    const imageTags = ["waifu", "neko", "shinobu"];
+    const gifTags = ["waifu", "neko", "blowjob", "trap"];
+    const videoTags = ["hentai", "boobs", "pussy", "anal", "cum"];
+    let activeTag = { image: null, gif: null, video: null };
+
+    function renderTags(type) {
+      let tags = [];
+      let el = null;
+      if (type === "image") { tags = imageTags; el = document.getElementById("imageTags"); }
+      if (type === "gif") { tags = gifTags; el = document.getElementById("gifTags"); }
+      if (type === "video") { tags = videoTags; el = document.getElementById("videoTags"); }
+      if (el) el.innerHTML = tags.map(tag => `<button class="tag-btn" onclick="filterByTag('${type}','${tag}',this)">${tag}</button>`).join('');
+    }
+    function filterByTag(type, tag, btn) {
+      document.querySelectorAll(`#${type}Tags .tag-btn`).forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTag[type] = tag;
+      filterGallery(type);
+    }
+    function filterGallery(type) {
+      let search = "";
+      let cards = [];
+      if (type === "image") {
+        search = document.getElementById("imageSearch").value.toLowerCase();
+        cards = document.querySelectorAll("#imageGallery .media-card");
+      }
+      if (type === "gif") {
+        search = document.getElementById("gifSearch").value.toLowerCase();
+        cards = document.querySelectorAll("#gifGallery .media-card");
+      }
+      if (type === "video") {
+        search = document.getElementById("videoSearch").value.toLowerCase();
+        cards = document.querySelectorAll("#videoGallery .media-card");
+      }
+      cards.forEach(card => {
+        const tag = card.getAttribute("data-tag") || "";
+        const info = card.textContent.toLowerCase();
+        if (
+          (activeTag[type] && tag !== activeTag[type]) ||
+          (search && !info.includes(search))
+        ) {
+          card.style.display = "none";
+        } else {
+          card.style.display = "";
+        }
+      });
+    }
+
+    // Laad waifu afbeeldingen
+    async function loadWaifus() {
+      const gallery = document.getElementById("imageGallery");
+      gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      renderTags("image");
+      let count = parseInt(document.getElementById("resultsCount")?.value) || 12;
+      const nsfw = isNSFW() ? "nsfw" : "sfw";
+      const categories = isNSFW() ? ["waifu", "neko", "trap"] : ["waifu", "neko", "shinobu"];
+      try {
+        let galleryHTML = "";
+        for (let i = 0; i < count; i++) {
+          const category = categories[Math.floor(Math.random() * categories.length)];
+          const res = await fetch(`https://api.waifu.pics/${nsfw}/${category}`);
+          const data = await res.json();
+          galleryHTML += `
+            <div class="media-card visible" data-tag="${category}">
+              <img src="${data.url}" alt="Anime ${category}" loading="lazy">
+              <div class="media-type">${category}</div>
+              <div class="media-info">
+                <div style="color: var(--accent);">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
+              </div>
+            </div>
+          `;
+        }
+        gallery.innerHTML = galleryHTML;
+        filterGallery("image");
+        enableMediaModalClicks();
+      } catch (error) {
+        console.error("Error loading images:", error);
+        gallery.innerHTML = '<p style="text-align: center; color: var(--accent);">Failed to load images. Please try again later.</p>';
+      }
+    }
+
+    // Laad GIFs (alleen bestaande waifu.pics NSFW GIF endpoints)
+    async function loadGIFs() {
+      const gallery = document.getElementById("gifGallery");
+      renderTags("gif");
+      if (!isNSFW()) {
+        gallery.innerHTML = `
+          <div class="nsfw-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>NSFW Content Locked</h2>
+            <p>You must enable 18+ content in settings to view this section.</p>
+            <button class="enable-nsfw" onclick="toggleNSFW()">
+              Enable NSFW Content
+            </button>
+          </div>
+        `;
+        return;
+      }
+      gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      // Alleen bestaande NSFW GIF endpoints van waifu.pics
+      const types = ["waifu", "neko", "trap", "blowjob"];
+      let count = parseInt(document.getElementById("resultsCount")?.value) || 8;
+      try {
+        let galleryHTML = "";
+        for (let i = 0; i < count; i++) {
+          const type = types[Math.floor(Math.random() * types.length)];
+          const res = await fetch(`https://api.waifu.pics/nsfw/${type}`);
+          const data = await res.json();
+          galleryHTML += `
+            <div class="media-card visible" data-tag="${type}">
+              <img src="${data.url}" alt="Anime ${type} GIF" loading="lazy">
+              <div class="media-type">GIF</div>
+              <div class="media-info">
+                <div style="color: var(--accent);">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+              </div>
+            </div>
+          `;
+        }
+        gallery.innerHTML = galleryHTML;
+        filterGallery("gif");
+        enableMediaModalClicks();
+      } catch (error) {
+        console.error("Error loading GIFs:", error);
+        gallery.innerHTML = '<p style="text-align: center; color: var(--accent);">Failed to load GIFs. Please try again later.</p>';
+      }
+    }
+
+    // Laad video's (gebruik fallback naar SFW anime video API)
+    async function loadVideos() {
+      const gallery = document.getElementById("videoGallery");
+      renderTags("video");
+      if (!isNSFW()) {
+        gallery.innerHTML = `
+          <div class="nsfw-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>NSFW Content Locked</h2>
+            <p>You must enable 18+ content in settings to view this section.</p>
+            <button class="enable-nsfw" onclick="toggleNSFW()">
+              Enable NSFW Content
+            </button>
+          </div>
+        `;
+        return;
+      }
+      gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      // Redgifs API (public trending NSFW gifs, fallback op embed)
+      let count = parseInt(document.getElementById("resultsCount")?.value) || 6;
+      try {
+        // Fetch trending NSFW gifs from Redgifs API (no API key needed for trending)
+        const res = await fetch(`https://api.redgifs.com/v2/gifs/trending?tags=hentai&count=${count}`);
+        const data = await res.json();
+        let galleryHTML = "";
+        if (data && data.gifs && data.gifs.length) {
+          galleryHTML = data.gifs.slice(0, count).map(gif => `
+            <div class="media-card visible" data-tag="hentai">
+              <video controls loop poster="${gif.urls.poster}" style="background:#000">
+                <source src="${gif.urls.hd || gif.urls.sd || gif.urls.gif}" type="video/mp4">
+              </video>
+              <div class="media-type">Video</div>
+              <div class="media-info">
+                <div style="color: var(--accent);">Hentai</div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          galleryHTML = `<p style="text-align:center;color:var(--accent);">No hentai videos found.</p>`;
+        }
+        gallery.innerHTML = galleryHTML;
+        filterGallery("video");
+        enableMediaModalClicks();
+      } catch (error) {
+        console.error("Error loading videos:", error);
+        gallery.innerHTML = `
+          <div style="text-align:center;color:var(--accent);">
+            Failed to load videos.<br>
+            <span style="font-size:1.2em;">No working NSFW video API available.</span>
+          </div>
+        `;
+      }
+    }
+
+    // --- Waifus Reals ---
+    let realsImages = [];
+    let realsIndex = 0;
+
+    async function loadReals() {
+      const container = document.getElementById("realsContainer");
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      let count = 10;
+      const nsfw = isNSFW() ? "nsfw" : "sfw";
+      const categories = isNSFW() ? ["waifu", "neko", "trap"] : ["waifu", "neko", "shinobu"];
+      try {
+        // Fetch 10 waifus in parallel
+        const fetches = Array.from({length: count}, () => {
+          const category = categories[Math.floor(Math.random() * categories.length)];
+          return fetch(`https://api.waifu.pics/${nsfw}/${category}`)
+            .then(res => res.json())
+            .then(data => ({category, url: data.url}));
+        });
+        realsImages = await Promise.all(fetches);
+        realsIndex = 0;
+        renderReals();
+      } catch (e) {
+        container.innerHTML = '<p style="color:var(--accent);text-align:center;">Failed to load waifus.</p>';
+      }
+    }
+
+    function renderReals() {
+      const container = document.getElementById("realsContainer");
+      if (!realsImages.length) {
+        container.innerHTML = '<p style="color:var(--accent);text-align:center;">No waifus loaded.</p>';
+        return;
+      }
+      const {url, category} = realsImages[realsIndex];
+      container.innerHTML = `
+        <div class="media-card visible" style="max-width:380px;cursor:pointer;" data-tag="${category}">
+          <img src="${url}" alt="Waifu Reel" style="width:100%;height:420px;object-fit:cover;border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.4);" onclick="openMediaModal('${url}','img','${category}')">
+          <div class="media-type">${category}</div>
+          <div class="media-info" style="text-align:center;">
+            <div style="color: var(--accent);font-size:1.2em;">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
+            <div style="margin-top:8px;">
+              <button class="download-all-btn" onclick="favCurrentReals();event.stopPropagation();"><i class="fas fa-star"></i> Favorite</button>
+              <button class="refresh-btn" onclick="downloadCurrentReals();event.stopPropagation();"><i class="fas fa-download"></i> Download</button>
+            </div>
+          </div>
+        </div>
+        <div style="color:var(--text-muted);margin-top:10px;">${realsIndex+1} / ${realsImages.length}</div>
+      `;
+    }
+
+    function nextReals() {
+      if (realsImages.length === 0) return;
+      realsIndex = (realsIndex + 1) % realsImages.length;
+      renderReals();
+    }
+    function prevReals() {
+      if (realsImages.length === 0) return;
+      realsIndex = (realsIndex - 1 + realsImages.length) % realsImages.length;
+      renderReals();
+    }
+    function favCurrentReals() {
+      if (!realsImages.length) return;
+      const favs = JSON.parse(localStorage.getItem("waifuFavs") || "[]");
+      const current = realsImages[realsIndex];
+      if (!favs.find(f => f.url === current.url)) {
+        favs.push(current);
+        localStorage.setItem("waifuFavs", JSON.stringify(favs));
+        showToast("Added to favorites!");
+      } else {
+        showToast("Already in favorites!");
+      }
+    }
+    function downloadCurrentReals() {
+      if (!realsImages.length) return;
+      const {url, category} = realsImages[realsIndex];
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `waifu_${category}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => a.remove(), 100);
+    }
+
+    // --- Favorites tab ---
+    function loadFavs() {
+      const gallery = document.getElementById("favsGallery");
+      const favs = JSON.parse(localStorage.getItem("waifuFavs") || "[]");
+      if (!favs.length) {
+        gallery.innerHTML = '<p style="color:var(--accent);text-align:center;">No favorites yet.</p>';
+        return;
+      }
+      gallery.innerHTML = favs.map(fav => `
+        <div class="media-card visible" data-tag="${fav.category}">
+          <img src="${fav.url}" alt="Favorite Waifu" style="cursor:pointer;" onclick="openMediaModal('${fav.url}','img','${fav.category}')">
+          <div class="media-type">${fav.category}</div>
+          <div class="media-info" style="text-align:center;">
+            <button class="reset-filters-btn" onclick="removeFav('${fav.url}');event.stopPropagation();"><i class="fas fa-trash"></i> Remove</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    function removeFav(url) {
+      let favs = JSON.parse(localStorage.getItem("waifuFavs") || "[]");
+      favs = favs.filter(f => f.url !== url);
+      localStorage.setItem("waifuFavs", JSON.stringify(favs));
+      loadFavs();
+      showToast("Removed from favorites!");
+    }
+    function clearFavs() {
+      if (confirm("Clear all favorites?")) {
+        localStorage.removeItem("waifuFavs");
+        loadFavs();
+        showToast("Favorites cleared!");
+      }
+    }
+
+    // --- Init ---
+    window.onload = () => {
+      // Stel NSFW toggle in
+      if (localStorage.getItem("nsfwEnabled") === "true") {
+        document.getElementById("nsfwToggle").classList.add("active");
+      }
+      restoreSettings();
+      // Show/hide tags setting
+      if (localStorage.getItem("showTags") === "false") {
+        document.getElementById("showTagsToggle").classList.remove("active");
+        ["imageTags","gifTags","videoTags"].forEach(id => {
+          document.getElementById(id).style.display = "none";
+        });
+      }
+      // Auto refresh event
+      document.getElementById("autoRefreshInterval")?.addEventListener("change", setupAutoRefresh);
+      // Controleer hash bij laden
+      const hash = window.location.hash.substring(1);
+      if (hash && document.getElementById(hash)) {
+        showSection(hash);
+        if (hash === 'images') loadWaifus();
+        if (hash === 'videos') loadVideos();
+        if (hash === 'gifs') loadGIFs();
+      } else {
+        // Standaard laad images
+        showSection('images');
+        loadWaifus();
+      }
+      setupAutoRefresh();
+    };
+
+    // ...existing code...
+  </script>
+
+</body>
+</html>
